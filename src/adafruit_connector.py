@@ -13,6 +13,7 @@ items_structure = {
     'Date modified': []
 }
 
+# region Items-methods
 def read_items(key):
     # create an instance of the REST client.
     aio = Client(adafruit_user, adafruit_key)
@@ -41,9 +42,28 @@ def add_item(key, items_df, item):
     try:
         feed = aio.feeds(key)
 
+        # TODO: Verify if the barcode is already present. in which case we increment the quantity
         items_df.loc[len(items_df)] = item
         items_json = items_df.to_json(orient='records')
         aio.send_data(feed.key, items_json)
         return True
     except RequestError:
         return False
+
+def reduce_item(key, items_df, barcode, quantity_diff):
+    return False
+
+def remove_item(key, items_df, barcode):
+    return False
+# endregion Items-methods
+
+# region Barcode-methods
+def read_barcode_dict(key):
+    return False
+
+def add_barcode_dict(key, barcode, description):
+    return False
+
+def remove_barcode_dict(key, barcode):
+    return False
+# endregion Barcode-methods
