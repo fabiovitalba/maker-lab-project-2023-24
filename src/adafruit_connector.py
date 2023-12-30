@@ -26,6 +26,8 @@ def read_items():
         feed = aio.feeds(ITEMS_KEY)
         feed_data = aio.receive(feed.key)
         items = pd.read_json(StringIO(feed_data.value))
+        if len(items) <= 0:
+            items = pd.DataFrame(items_structure)
     except RequestError:
         # If an error is thrown, we assume the Adafruit Feed does not exist
         # In this case we create a new Adafruit Feed, a new DataFrame using the predefined Structure, and store the new DataFrame in Adafruit
@@ -50,14 +52,15 @@ def update_items_in_adafruit(items_df):
         return False
 
 def add_item(items_df, item):
-    barcodes = items_df['Barcode']
     # if the Barcode is already present in items_df, we simply increase it's quantity.
     # otherwise a new entry is created
-    if barcodes.isin([item[1]]).any():
-        return reduce_item(items_df, item[1], -item[4])
-    else:
-        items_df.loc[len(items_df)] = item
-        return update_items_in_adafruit(items_df)
+    if len(items_df) > 0:
+        barcodes = items_df['Barcode']
+        if barcodes.isin([item[1]]).any():
+            return reduce_item(items_df, item[1], -item[4])
+        
+    items_df.loc[len(items_df)] = item
+    return update_items_in_adafruit(items_df)
 
 def reduce_item(items_df, barcode, quantity_diff):
     # find the provided barcode in items_df, and decrease the quantity accordingly
