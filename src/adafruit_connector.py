@@ -1,4 +1,5 @@
 from Adafruit_IO import Client, Feed, RequestError
+from datetime import datetime
 from io import StringIO
 from const import ITEMS_KEY
 from env import adafruit_user, adafruit_key
@@ -49,12 +50,17 @@ def update_items_in_adafruit(items_df):
         return False
 
 def add_item(items_df, item):
-    items_df.loc[len(items_df)] = item
-    return update_items_in_adafruit(items_df)
+    barcodes = items_df['Barcode']
+    if barcodes.isin([item[1]]).any():
+        return reduce_item(items_df, item[1], -item[4])
+    else:
+        items_df.loc[len(items_df)] = item
+        return update_items_in_adafruit(items_df)
 
 def reduce_item(items_df, barcode, quantity_diff):
     items_df.loc[items_df['Barcode'] == barcode, 'Quantity'] -= quantity_diff
-    if (items_df.loc[items_df['Barcode'] == barcode, 'Quantity'] <= 0):
+    items_df.loc[items_df['Barcode'] == barcode, 'Date modified'] = datetime.now()
+    if (items_df.loc[items_df['Barcode'] == barcode, 'Quantity'].all() <= 0):
         remove_item(items_df, barcode)
     return update_items_in_adafruit(items_df)
 
