@@ -52,8 +52,8 @@ def add_item(items_df, item):
         return False
 
 def reduce_item(items_df, barcode, quantity_diff):
-    return False
+    return False #TODO: Implement method that reduces the quantity of an existing item by the provided quantity_diff
 
 def remove_item(items_df, barcode):
-    return False
+    return False #TODO: Remove the whole item-entry of the provided barcode
 # endregion Items-methods
