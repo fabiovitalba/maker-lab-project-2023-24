@@ -51,6 +51,8 @@ def update_items_in_adafruit(items_df):
 
 def add_item(items_df, item):
     barcodes = items_df['Barcode']
+    # if the Barcode is already present in items_df, we simply increase it's quantity.
+    # otherwise a new entry is created
     if barcodes.isin([item[1]]).any():
         return reduce_item(items_df, item[1], -item[4])
     else:
@@ -58,6 +60,8 @@ def add_item(items_df, item):
         return update_items_in_adafruit(items_df)
 
 def reduce_item(items_df, barcode, quantity_diff):
+    # find the provided barcode in items_df, and decrease the quantity accordingly
+    # if the quantity is equal or below 0, remove the item
     items_df.loc[items_df['Barcode'] == barcode, 'Quantity'] -= quantity_diff
     items_df.loc[items_df['Barcode'] == barcode, 'Date modified'] = datetime.now()
     if (items_df.loc[items_df['Barcode'] == barcode, 'Quantity'].all() <= 0):
@@ -65,6 +69,7 @@ def reduce_item(items_df, barcode, quantity_diff):
     return update_items_in_adafruit(items_df)
 
 def remove_item(items_df, barcode):
-    items_df = items_df[items_df['Barcode'] != barcode]
+    # find the provided barcode in items_df and remove its entry
+    items_df.drop(items_df.loc[items_df['Barcode'] == barcode].index, inplace=True)
     return update_items_in_adafruit(items_df)
 # endregion Items-methods

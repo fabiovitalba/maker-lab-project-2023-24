@@ -5,6 +5,7 @@ from datetime import datetime
 # In order to retrieve the existing items from adafruit, we need to call the read_items method from adafruit
 items = read_items()
 start_len = len(items)
+print_df_after_test = True
 
 # In order to add a new Item to the set, we need to initialize a List (Array) with the new data and call the add_item() method.
 # The List is in format [timestamp, barcode, description, expiration_date, quantity, datetime_created, datetime_modified]
@@ -24,7 +25,8 @@ if (len(items_updated) != len(items)) or (len(items_updated) != start_len + 2):
 else:
     print('\033[92mOK\033[0m')
 
-print(items_updated)
+if print_df_after_test:
+    print(items)
 
 reduce_item(items, '8056149086957', 2)
 print('\n\033[94m2. TEST: Adafruit Items Reduce > 0: \033[0m')
@@ -33,7 +35,8 @@ if len(items) != start_len + 2:
 else:
     print('\033[92mOK\033[0m')
 
-print(items_updated)
+if print_df_after_test:
+    print(items)
 
 reduce_item(items, '8001300242802', 2)
 print('\n\033[94m3. TEST: Adafruit Items Reduce <= 0: \033[0m')
@@ -42,7 +45,8 @@ if len(items) != start_len + 1:
 else:
     print('\033[92mOK\033[0m')
 
-print(items_updated)
+if print_df_after_test:
+    print(items)
 
 remove_item(items, '8056149086957')
 print('\n\033[94m4. TEST: Adafruit Items Remove: \033[0m')
@@ -51,4 +55,5 @@ if len(items) != start_len:
 else:
     print('\033[92mOK\033[0m')
 
-print(items_updated)
+if print_df_after_test:
+    print(items)
