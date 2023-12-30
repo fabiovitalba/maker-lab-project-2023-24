@@ -1,4 +1,3 @@
-import time
 from Adafruit_IO import Client, Data, Feed, RequestError
 from env import adafruit_user, adafruit_key
 import pandas as pd
@@ -32,7 +31,20 @@ def read_items(key):
         aio.send_data(feed.key, items_json)
     
     return items
-    
+
+def add_item(key, items_df, item):
+    # create an instance of the REST client.
+    aio = Client(adafruit_user, adafruit_key)
+
+    try:
+        feed = aio.feeds(key)
+
+        items_df.loc[len(items_df)] = item
+        items_json = items_df.to_json(orient='records')
+        aio.send_data(feed.key, items_json)
+        return True
+    except RequestError:
+        return False
     
 
 # Adafruit connector taken from lab exercises
