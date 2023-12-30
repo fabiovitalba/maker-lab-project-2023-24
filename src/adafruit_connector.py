@@ -35,25 +35,30 @@ def read_items():
     
     return items
 
-def add_item(items_df, item):
+def update_items_in_adafruit(items_df):
     # create an instance of the REST client.
     aio = Client(adafruit_user, adafruit_key)
 
     # add item to the adafruit item table
     try:
         feed = aio.feeds(ITEMS_KEY)
-
-        # TODO: Verify if the barcode is already present. in which case we increment the quantity
-        items_df.loc[len(items_df)] = item
         items_json = items_df.to_json(orient='records')
         aio.send_data(feed.key, items_json)
         return True
     except RequestError:
         return False
 
+def add_item(items_df, item):
+    items_df.loc[len(items_df)] = item
+    return update_items_in_adafruit(items_df)
+
 def reduce_item(items_df, barcode, quantity_diff):
-    return False #TODO: Implement method that reduces the quantity of an existing item by the provided quantity_diff
+    items_df.loc[items_df['Barcode'] == barcode, 'Quantity'] -= quantity_diff
+    if (items_df.loc[items_df['Barcode'] == barcode, 'Quantity'] <= 0):
+        remove_item(items_df, barcode)
+    return update_items_in_adafruit(items_df)
 
 def remove_item(items_df, barcode):
-    return False #TODO: Remove the whole item-entry of the provided barcode
+    items_df = items_df[items_df['Barcode'] != barcode]
+    return update_items_in_adafruit(items_df)
 # endregion Items-methods
