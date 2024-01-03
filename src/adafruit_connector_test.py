@@ -8,11 +8,11 @@ start_len = len(items)
 print_df_after_test = True
 
 # In order to add a new Item to the set, we need to initialize a List (Array) with the new data and call the add_item() method.
-# The List is in format [timestamp, barcode, description, expiration_date, quantity, datetime_created, datetime_modified]
-new_item = [datetime.now(), '8056149086957', 'Olive Nere Denocciolate in Salamoia', '31/12/2024', 3, datetime.now(), None]
+# The List is in format [barcode, description, expiration_date, quantity, datetime_created, datetime_modified]
+new_item = ['8056149086957', 'Olive Nere Denocciolate in Salamoia', '31/12/2024', 3, datetime.now(), None]
 if not add_item(items, new_item):
     print('\033[91mADD_ITEM-method FAILED\033[0m')
-new_item = [datetime.now(), '8001300242802', 'Maionese vegetale', '31/07/2024', 2, datetime.now(), None]
+new_item = ['8001300242802', 'Maionese vegetale', '31/07/2024', 2, datetime.now(), None]
 if not add_item(items, new_item):
     print('\033[91mADD_ITEM-method FAILED\033[0m')
 
@@ -57,3 +57,39 @@ else:
 
 if print_df_after_test:
     print(items)
+
+remove_item(items, 'abc')
+print('\n\033[94m4. TEST: Adafruit Items Remove non existing: \033[0m')
+if len(items) != start_len:
+    print('\033[91mFAIL\033[0m')
+else:
+    print('\033[92mOK\033[0m')
+
+if print_df_after_test:
+    print(items)
+
+
+
+# Re-Read Dataset and add test items again
+items = read_items()
+start_len = len(items)
+new_item = ['8056149086957', 'Olive Nere Denocciolate in Salamoia', '31/12/2024', 3, datetime.now(), None]
+if not add_item(items, new_item):
+    print('\033[91mADD_ITEM-method FAILED\033[0m')
+new_item = ['8001300242802', 'Maionese vegetale', '31/07/2024', 2, datetime.now(), None]
+if not add_item(items, new_item):
+    print('\033[91mADD_ITEM-method FAILED\033[0m')
+
+# Read another time to retrieve data from Adafruit once again
+items = read_items()
+remove_item(items, '8056149086957')
+reduce_item(items, '8001300242802', 2)
+print('\n\033[94m4. TEST: Remove Items after having freshly read from Adafruit: \033[0m')
+if len(items) != start_len:
+    print('\033[91mFAIL\033[0m')
+else:
+    print('\033[92mOK\033[0m')
+
+if print_df_after_test:
+    print(items)
+
