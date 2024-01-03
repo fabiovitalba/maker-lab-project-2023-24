@@ -5,3 +5,9 @@ print(olives_description)
 
 mayo_description = get_desc_from_barcode('8001300242802') # Maionese vegetale
 print(mayo_description)
+
+empty_description = get_desc_from_barcode('123')
+print(empty_description)
+
+empty_description = get_desc_from_barcode(1234)
+print(empty_description)
