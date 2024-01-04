@@ -71,19 +71,18 @@ def main():
                     print("\033[33mNo items found.\033[0m\n")
                     continue
 
-                print(items_df)
-                continue
+                # uncomment to skip formatted printing
+                # print(items_df)
+                # continue
 
                 # Print items in a formatted table
                 items_copy = items_df.copy()
-                items_copy['Timestamp'] = pd.to_datetime(
-                    items_copy['Timestamp']).dt.strftime('%d/%m/%Y')
                 items_copy['Expiration Date'] = pd.to_datetime(
-                    items_copy['Expiration Date'], unit='ms').dt.strftime('%d/%m/%Y')
+                    items_copy['Expiration Date']).dt.strftime('%d/%m/%Y')
                 items_copy['Date added'] = pd.to_datetime(
-                    items_copy['Date added'], unit='ms').dt.strftime('%d/%m/%Y')
+                    items_copy['Date added']).dt.strftime('%d/%m/%Y')
                 items_copy['Date modified'] = pd.to_datetime(
-                    items_copy['Date modified'], unit='ms').dt.strftime('%d/%m/%Y')
+                    items_copy['Date modified']).dt.strftime('%d/%m/%Y')
                 items_copy.sort_values(by=['Expiration Date'], inplace=True)
                 items_copy = colorize_rows(items_copy)
                 headers = [header.upper() for header in items_copy.columns]
@@ -100,7 +99,7 @@ def main():
                     description = input("Enter name: ")
                 quantity = get_quantity("Enter quantity: ")
                 expiration_date = get_expiration_date()
-                new_item = [datetime.now(), barcode, description, expiration_date,
+                new_item = [barcode, description, expiration_date,
                             quantity, datetime.now(), None]
                 if not add_item(items_df, new_item):
                     print('\033[31mADD_ITEM-method FAILED\033[0m')
@@ -108,8 +107,16 @@ def main():
                     print('\033[92mItem added successfully\033[0m')
 
             elif option == 'R':
-                barcode = input("Enter barcode: ")
-                quantity = get_quantity("Enter quantity (0 to remove all): ")
+                # continue reading for barcode until one that is in items_df is provided
+                while True:
+                    barcode = input("Enter a barcode: ")
+                    if barcode in items_df['Barcode'].values:
+                        break
+                    else:
+                        print(
+                            "\033[93mBarcode not found. Please try again.\033[0m")
+
+                quantity = get_quantity("Enter quantity to remove: ")
                 reduce_item(items_df, barcode, quantity)
 
             elif option == 'Q':
@@ -119,7 +126,7 @@ def main():
             else:
                 print("\033[93mInvalid option. Please try again.\033[0m")
 
-            print("")
+            print()
     except KeyboardInterrupt:
         print("\nProgram terminated by user. Goodbye!")
 
