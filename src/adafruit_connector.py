@@ -41,7 +41,7 @@ def read_items():
         # In this case we create a new Adafruit Feed, a new DataFrame using the predefined Structure, and store the new DataFrame in Adafruit
         feed = aio.create_feed(Feed(name=ITEMS_KEY, key=ITEMS_KEY, history=False))
         items = pd.DataFrame(items_structure)
-        items_json = items.to_json(orient='records')
+        items_json = items.to_json(orient='records', date_format='iso', default_handler=str)
         aio.send_data(feed.key, items_json)
     
     return items
@@ -53,7 +53,7 @@ def update_items_in_adafruit(items_df):
     # add item to the adafruit item table
     try:
         feed = aio.feeds(ITEMS_KEY)
-        items_json = items_df.to_json(orient='records')
+        items_json = items_df.to_json(orient='records', date_format='iso', default_handler=str)
         aio.send_data(feed.key, items_json)
         return True
     except RequestError:
@@ -66,7 +66,13 @@ def add_item(items_df, item):
         barcodes = items_df[BARCODE_LBL]
         if barcodes.isin([item[1]]).any():
             return reduce_item(items_df, item[1], -item[4])
-        
+    
+    item[0] = str(item[0])
+    item[1] = str(item[1])
+    item[2] = pd.to_datetime(item[2], dayfirst=True)
+    item[3] = float(item[3])
+    item[4] = pd.to_datetime(item[4], dayfirst=True)
+    item[5] = pd.to_datetime(item[5], dayfirst=True)
     items_df.loc[len(items_df)] = item
     return update_items_in_adafruit(items_df)
 
