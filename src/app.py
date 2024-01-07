@@ -52,7 +52,7 @@ def main():
 
     print("\n" + "*" * 42)
     print("*" + "Fridge Inventory Management".center(40) + "*")
-    print("+" + "D. Di Bella & F. Vitalba".center(40) + "*")
+    print("*" + "D. Di Bella & F. Vitalba".center(40) + "*")
     print("*" * 42 + "\n")
     items_df = read_items()
 
@@ -83,7 +83,7 @@ def main():
                     items_copy['Date added']).dt.strftime('%d/%m/%Y')
                 items_copy['Date modified'] = pd.to_datetime(
                     items_copy['Date modified']).dt.strftime('%d/%m/%Y')
-                items_copy.sort_values(by=['Expiration Date'], inplace=True)
+                items_copy.sort_values(by=['Expiration Date'], inplace=True, ascending=False)
                 items_copy = colorize_rows(items_copy)
                 headers = [header.upper() for header in items_copy.columns]
                 print(tabulate(items_copy, headers=headers,
@@ -102,9 +102,9 @@ def main():
                 new_item = [barcode, description, expiration_date,
                             quantity, datetime.now(), None]
                 if not add_item(items_df, new_item):
-                    print('\033[31mADD_ITEM-method FAILED\033[0m')
+                    print('\033[31mCould not add item.\033[0m')
                 else:
-                    print('\033[92mItem added successfully\033[0m')
+                    print('\033[92mItem added successfully!\033[0m')
 
             elif option == 'R':
                 # continue reading for barcode until one that is in items_df is provided

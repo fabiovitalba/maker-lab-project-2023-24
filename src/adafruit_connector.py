@@ -32,10 +32,10 @@ def read_items():
             # Since read_json converts all columns to datatype object, we need to manually convert all values again
             items[BARCODE_LBL] = items[BARCODE_LBL].astype(str)
             items[DESC_LBL] = items[DESC_LBL].astype(str)
-            items[EXP_LBL] = pd.to_datetime(items[EXP_LBL], dayfirst=True)
+            items[EXP_LBL] = pd.to_datetime(items[EXP_LBL], dayfirst=False)
             items[QTY_LBL] = items[QTY_LBL].astype(float)
-            items[DATE_ADDED_LBL] = pd.to_datetime(items[DATE_ADDED_LBL], dayfirst=True)
-            items[DATE_MODIFIED_LBL] = pd.to_datetime(items[DATE_MODIFIED_LBL], dayfirst=True)
+            items[DATE_ADDED_LBL] = pd.to_datetime(items[DATE_ADDED_LBL], dayfirst=False)
+            items[DATE_MODIFIED_LBL] = pd.to_datetime(items[DATE_MODIFIED_LBL], dayfirst=False)
     except RequestError:
         # If an error is thrown, we assume the Adafruit Feed does not exist
         # In this case we create a new Adafruit Feed, a new DataFrame using the predefined Structure, and store the new DataFrame in Adafruit
@@ -69,10 +69,10 @@ def add_item(items_df, item):
     
     item[0] = str(item[0])
     item[1] = str(item[1])
-    item[2] = pd.to_datetime(item[2], dayfirst=True)
+    item[2] = pd.to_datetime(item[2], dayfirst=False)
     item[3] = float(item[3])
-    item[4] = pd.to_datetime(item[4], dayfirst=True)
-    item[5] = pd.to_datetime(item[5], dayfirst=True)
+    item[4] = pd.to_datetime(item[4], dayfirst=False)
+    item[5] = pd.to_datetime(item[5], dayfirst=False)
     items_df.loc[len(items_df)] = item
     return update_items_in_adafruit(items_df)
 
