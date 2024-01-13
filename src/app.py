@@ -10,8 +10,7 @@ def get_expiration_date():
     while True:
         expiration_date_str = input("Enter expiration date (DD/MM/YYYY): ")
         try:
-            expiration_date = datetime.strptime(
-                expiration_date_str, '%d/%m/%Y')
+            expiration_date = pd.to_datetime(expiration_date_str).timestamp()
             return expiration_date
         except ValueError:
             print("\033[33mInvalid date format. Please try again.\033[0m")
@@ -20,24 +19,31 @@ def get_expiration_date():
 def get_quantity(str):
     while True:
         try:
-            quantity = int(input(str))
+            quantity = int(input(str) or (1))
             return quantity
         except ValueError:
             print("\033[33mInvalid input. Please enter a number.\033[0m")
 
 
 def colorize_rows(df):
-    df = df.astype(str)
+    
     for i in range(len(df)):
-        # Parse the date string into a datetime object
-        date = datetime.strptime(df.loc[i, 'Expiration Date'], '%d/%m/%Y')
 
         # Get the current date
         now = datetime.now()
 
         # Calculate the difference between the date and now
-        diff = (date - now).days
+        diff = (df.loc[i, 'Expiration Date'] - now).days
 
+        print(df.loc[i, 'Expiration Date'].strftime("%B %d, %Y"))
+
+        df.loc[i, 'Expiration Date'] = df.loc[i, 'Expiration Date'].strftime("%B %d, %Y")
+        df.loc[i, 'Date added'] = df.loc[i, 'Date added'].strftime("%B %d, %Y")
+
+        print(df.loc[i, 'Date added'])
+
+        df.loc[i] = df.loc[i].astype(str)
+        
         # Colorize based on the difference
         if diff <= 1:
             df.loc[i] = '\033[31m' + df.loc[i].astype(str) + '\033[0m'  # red
@@ -72,18 +78,17 @@ def main():
                     continue
 
                 # uncomment to skip formatted printing
-                # print(items_df)
-                # continue
+                
+                #items_copy = items_df.copy()
+                #print(items_df)
+                #continue
 
                 # Print items in a formatted table
                 items_copy = items_df.copy()
-                items_copy['Expiration Date'] = pd.to_datetime(
-                    items_copy['Expiration Date']).dt.strftime('%d/%m/%Y')
-                items_copy['Date added'] = pd.to_datetime(
-                    items_copy['Date added']).dt.strftime('%d/%m/%Y')
-                items_copy['Date modified'] = pd.to_datetime(
-                    items_copy['Date modified']).dt.strftime('%d/%m/%Y')
-                items_copy.sort_values(by=['Expiration Date'], inplace=True, ascending=False)
+                items_copy.sort_values(by=['Expiration Date'], inplace=True)
+                items_copy['Expiration Date'] = pd.to_datetime(items_copy['Expiration Date'], unit='s')
+                items_copy['Date added'] = pd.to_datetime(items_copy['Date added'], unit='s')
+                items_copy['Date modified'] = pd.to_datetime(items_copy['Date modified'], unit='s')
                 items_copy = colorize_rows(items_copy)
                 headers = [header.upper() for header in items_copy.columns]
                 print(tabulate(items_copy, headers=headers,
@@ -97,10 +102,10 @@ def main():
                         f"Enter name (press enter for '{description_temp}'): ") or description_temp
                 else:
                     description = input("Enter name: ")
-                quantity = get_quantity("Enter quantity: ")
+                quantity = get_quantity("Enter quantity (press enter for 1): ")
                 expiration_date = get_expiration_date()
                 new_item = [barcode, description, expiration_date,
-                            quantity, datetime.now(), None]
+                            quantity, pd.to_datetime('now').timestamp(), None]
                 if not add_item(items_df, new_item):
                     print('\033[31mCould not add item.\033[0m')
                 else:
@@ -116,7 +121,7 @@ def main():
                         print(
                             "\033[93mBarcode not found. Please try again.\033[0m")
 
-                quantity = get_quantity("Enter quantity to remove: ")
+                quantity = get_quantity("Enter quantity to remove (press enter for 1): ")
                 reduce_item(items_df, barcode, quantity)
 
             elif option == 'Q':
