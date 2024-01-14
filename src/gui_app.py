@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import simpledialog
 from item_list_window import item_list_window
+from add_item_window import add_item_window
 
 from adafruit_connector import read_items
 
@@ -8,12 +9,6 @@ WIN_WIDTH = 1024
 WIN_HEIGHT = 600
 TITLE_FONT = ("Helvetica", 18, "bold")
 BUTTON_FONT = ("Helvetica", 28, "bold")
-
-def add_item(inventory):
-    item = simpledialog.askstring("Add Item", "Enter the item:")
-    if item:
-        inventory.append(item)
-        display_message(f"Item '{item}' added successfully.")
 
 def remove_item(inventory):
     item = simpledialog.askstring("Remove Item", "Enter the item to remove:")
@@ -42,7 +37,7 @@ def main_menu_window(mm_window, items_df):
 
     list_button = ctk.CTkButton(mm_window, text="List all items", command=lambda: item_list_window(WIN_HEIGHT, WIN_WIDTH, BUTTON_FONT, items_df), width=button_width, height=button_height, font=BUTTON_FONT)
     list_button.pack(pady=10)
-    add_button = ctk.CTkButton(mm_window, text="Add an item", command=lambda: add_item(), width=button_width, height=button_height, font=BUTTON_FONT)
+    add_button = ctk.CTkButton(mm_window, text="Add an item", command=lambda: add_item_window(WIN_HEIGHT, WIN_WIDTH, BUTTON_FONT, items_df), width=button_width, height=button_height, font=BUTTON_FONT)
     add_button.pack(pady=10)
     remove_button = ctk.CTkButton(mm_window, text="Remove an item", command=lambda: remove_item(), width=button_width, height=button_height, font=BUTTON_FONT)
     remove_button.pack(pady=10)
