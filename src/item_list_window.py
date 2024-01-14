@@ -14,3 +14,4 @@ def item_list_window(win_height, win_width, button_font, items_df):
     table = Table(canvas, dataframe=items_df, showtoolbar=False, showstatusbar=True, width=win_width-20, height=win_height-150)
     table.pack(pady=10)
     canvas.pack()
+    table.show()
