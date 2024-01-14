@@ -58,7 +58,6 @@ def main():
     window.resizable(False, False)
 
     items_df = read_items()
-    print(items_df)
     main_menu_window(window, items_df)
     window.mainloop()
 
