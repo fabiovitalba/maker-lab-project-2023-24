@@ -9,10 +9,10 @@ print_df_after_test = True
 
 # In order to add a new Item to the set, we need to initialize a List (Array) with the new data and call the add_item() method.
 # The List is in format [barcode, description, expiration_date, quantity, datetime_created, datetime_modified]
-new_item = ['8056149086957', 'Olive Nere Denocciolate in Salamoia', datetime(2023,12,31), 3, datetime.now(), None]
+new_item = ['8056149086957', 'Olive Nere Denocciolate in Salamoia', datetime(2023,12,31), 3, datetime.now()]
 if not add_item(items, new_item):
     print('\033[91mADD_ITEM-method FAILED\033[0m')
-new_item = ['8001300242802', 'Maionese vegetale', datetime(2024,7,31), 2, datetime.now(), None]
+new_item = ['8001300242802', 'Maionese vegetale', datetime(2024,7,31), 2, datetime.now()]
 if not add_item(items, new_item):
     print('\033[91mADD_ITEM-method FAILED\033[0m')
 
@@ -73,10 +73,10 @@ if print_df_after_test:
 # Re-Read Dataset and add test items again
 items = read_items()
 start_len = len(items)
-new_item = ['8056149086957', 'Olive Nere Denocciolate in Salamoia', datetime(2023,12,31), 3, datetime.now(), None]
+new_item = ['8056149086957', 'Olive Nere Denocciolate in Salamoia', datetime(2023,12,31), 3, datetime.now()]
 if not add_item(items, new_item):
     print('\033[91mADD_ITEM-method FAILED\033[0m')
-new_item = ['8001300242802', 'Maionese vegetale', datetime(2024,7,31), 2, datetime.now(), None]
+new_item = ['8001300242802', 'Maionese vegetale', datetime(2024,7,31), 2, datetime.now()]
 if not add_item(items, new_item):
     print('\033[91mADD_ITEM-method FAILED\033[0m')
 
