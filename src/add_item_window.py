@@ -8,23 +8,31 @@ def add_item_window(win_height, win_width, button_font, items_df):
     button_width = 450
     button_height = 100
     label_font = ("Helvetica", 20)
-    label_width = 450
+    label_width = 300
     label_height = 100
     input_font = ("Helvetica", 20, "bold")
-    input_width = 450
+    input_width = 600
     input_height = 100
 
     def on_barcode_change(event):
-        print(barcode_entry.get())
+        barcode = barcode_entry.get()
+        if ("\n" in barcode) or (event.keysym == "Return"):
+            description_entry.focus()
 
     def on_description_change(event):
-        print(description_entry.get())
+        description = description_entry.get()
+        if ("\n" in description) or (event.keysym == "Return"):
+            quantity_entry.focus()
 
     def on_quantity_change(event):
-        print(quantity_entry.get())
+        quantity_text = quantity_entry.get()
+        if ("\n" in quantity_text) or (event.keysym == "Return"):
+            expiration_date_entry.focus()
 
     def on_exp_date_change(event):
-        print(expiration_date_entry.get())
+        exp_date_text = expiration_date_entry.get()
+        if ("\n" in exp_date_text) or (event.keysym == "Return"):
+            confirm_input()
 
     def confirm_input():
         barcode_value = barcode_entry.get()
@@ -56,6 +64,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
     barcode_label.pack(side=ctk.LEFT, padx=10)
     barcode_entry = ctk.CTkEntry(barcode_frame, width=input_width, height=input_height, font=input_font)
     barcode_entry.bind("<Key>", on_barcode_change)
+    barcode_entry.focus()
     barcode_entry.pack(side=ctk.LEFT)
 
     description_frame = ctk.CTkFrame(ai_window)
