@@ -1,5 +1,10 @@
 import customtkinter as ctk
 from CTkTable import *
+import pandas as pd
+import datetime
+
+from item import find_desc_from_barcode
+from adafruit_connector import add_item
 
 def add_item_window(win_height, win_width, button_font, items_df):
     ai_window = ctk.CTkToplevel()
@@ -17,16 +22,30 @@ def add_item_window(win_height, win_width, button_font, items_df):
     def on_barcode_change(event):
         barcode = barcode_entry.get()
         if ("\n" in barcode) or (event.keysym == "Return"):
-            description_entry.focus()
+            description = find_desc_from_barcode(barcode)
+            if description == "":
+                # jump to description
+                description_entry.focus()
+            else:
+                # Set the description and jump to quantity
+                description_entry.delete(0, ctk.END)
+                description_entry.insert(0,description)
+                quantity_entry.delete(0, ctk.END)
+                quantity_entry.insert(0, str(1.0))
+                quantity_entry.focus()
 
     def on_description_change(event):
         description = description_entry.get()
         if ("\n" in description) or (event.keysym == "Return"):
+            quantity_entry.delete(0, ctk.END)
+            quantity_entry.insert(0, str(1.0))
             quantity_entry.focus()
 
     def on_quantity_change(event):
         quantity_text = quantity_entry.get()
         if ("\n" in quantity_text) or (event.keysym == "Return"):
+            expiration_date_entry.delete(0, ctk.END)
+            expiration_date_entry.insert(0, str(datetime.date.today().strftime("%d/%m/%Y")))
             expiration_date_entry.focus()
 
     def on_exp_date_change(event):
@@ -41,10 +60,11 @@ def add_item_window(win_height, win_width, button_font, items_df):
         expiration_date_value = expiration_date_entry.get()
 
         # You can process the input values as needed
-        print("Barcode:", barcode_value)
-        print("Description:", description_value)
-        print("Quantity:", quantity_value)
-        print("Expiration Date:", expiration_date_value)
+        new_item = [barcode_value, description_value, pd.to_datetime(expiration_date_value, format="%d/%m/%Y").timestamp(), quantity_value, pd.to_datetime('now').timestamp()]
+        if not add_item(items_df, new_item):
+            print('\033[31mCould not add item.\033[0m')
+        else:
+            print('\033[92mItem added successfully!\033[0m')
 
         # Add your logic to handle the confirmed input
 
@@ -53,6 +73,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
         description_entry.delete(0, ctk.END)
         quantity_entry.delete(0, ctk.END)
         expiration_date_entry.delete(0, ctk.END)
+        barcode_entry.focus()
 
     def cancel_input():
         ai_window.destroy()

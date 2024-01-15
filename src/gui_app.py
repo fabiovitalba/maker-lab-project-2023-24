@@ -1,8 +1,8 @@
 import customtkinter as ctk
 from tkinter import simpledialog
+
 from item_list_window import item_list_window
 from add_item_window import add_item_window
-
 from adafruit_connector import read_items
 
 WIN_WIDTH = 1024
