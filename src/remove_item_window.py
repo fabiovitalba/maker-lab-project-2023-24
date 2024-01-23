@@ -15,7 +15,7 @@ def remove_item_window(win_height, win_width, button_font, items_df):
 
     def on_barcode_change(event):
         barcode = barcode_entry.get()
-        if ("\n" in barcode) or (event.keysym == "Return"):
+        if event.keysym == "Return":
             print("confirm")
 
     def move_left():
