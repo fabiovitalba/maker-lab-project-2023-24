@@ -4,6 +4,7 @@ import datetime
 
 from item import find_desc_from_barcode
 from adafruit_connector import add_item
+from expiration_date import handle_exp_date_input
 
 def add_item_window(win_height, win_width, button_font, items_df):
     ai_window = ctk.CTkToplevel()
@@ -17,10 +18,11 @@ def add_item_window(win_height, win_width, button_font, items_df):
     input_font = ("Helvetica", 20, "bold")
     input_width = 600
     input_height = 100
+    curr_exp_date_list = [datetime.date.today()]    #This must be a list in order to be mutable from the change_event
 
     def on_barcode_change(event):
         barcode = barcode_entry.get()
-        if ("\n" in barcode) or (event.keysym == "Return"):
+        if event.keysym == "Return":
             description = find_desc_from_barcode(barcode)
             if description == "":
                 # jump to description
@@ -34,33 +36,37 @@ def add_item_window(win_height, win_width, button_font, items_df):
                 quantity_entry.focus()
 
     def on_description_change(event):
-        description = description_entry.get()
-        if ("\n" in description) or (event.keysym == "Return"):
+        if event.keysym == "Return":
             quantity_entry.delete(0, ctk.END)
             quantity_entry.insert(0, str(1.0))
             quantity_entry.focus()
 
     def on_quantity_change(event):
-        quantity_text = quantity_entry.get()
-        if ("\n" in quantity_text) or (event.keysym == "Return"):
+        if event.keysym == "Return":
             expiration_date_entry.delete(0, ctk.END)
-            expiration_date_entry.insert(0, str(datetime.date.today().strftime("%d/%m/%Y")))
+            expiration_date_entry.insert(0, str(curr_exp_date_list[0].strftime("%d/%m/%Y")))
             expiration_date_entry.focus()
 
-    def on_exp_date_change(event):
+    def on_exp_date_change(event, exp_date_list):
         exp_date_text = expiration_date_entry.get()
-        if ("\n" in exp_date_text) or (event.keysym == "Return"):
-            confirm_input()
+        next_input = False
+        if event.keysym == "Return":
+            [exp_date_list[0], next_input] = handle_exp_date_input(exp_date_text, exp_date_list[0])
+            if next_input:
+                confirm_input()
+            else:
+                expiration_date_entry.delete(0, ctk.END)
+                expiration_date_entry.insert(0, str(exp_date_list[0].strftime("%d/%m/%Y")))
+                expiration_date_entry.focus()    
 
     def confirm_input():
         barcode_value = barcode_entry.get()
         description_value = description_entry.get()
         quantity_value = quantity_entry.get()
-        expiration_date_value = expiration_date_entry.get()
         #TODO: add checks for missing values?
 
         # You can process the input values as needed
-        new_item = [barcode_value, description_value, pd.to_datetime(expiration_date_value, format="%d/%m/%Y").timestamp(), quantity_value, pd.to_datetime('now').timestamp()]
+        new_item = [barcode_value, description_value, pd.to_datetime(curr_exp_date_list[0]).timestamp(), quantity_value, pd.to_datetime('now').timestamp()]
         if not add_item(items_df, new_item):
             #TODO: change prints to something in gui
             print('\033[31mCould not add item.\033[0m')
@@ -108,7 +114,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
     expiration_date_label = ctk.CTkLabel(expiration_date_frame, text="Expiration Date (dd/mm/yyyy):", width=label_width, height=label_height, font=label_font)
     expiration_date_label.pack(side=ctk.LEFT, padx=10)
     expiration_date_entry = ctk.CTkEntry(expiration_date_frame, width=input_width, height=input_height, font=input_font)
-    expiration_date_entry.bind("<Key>", on_exp_date_change)
+    expiration_date_entry.bind("<Key>", lambda event: on_exp_date_change(event=event, exp_date_list=curr_exp_date_list))
     expiration_date_entry.pack(side=ctk.LEFT)
 
     # Create Confirm and Cancel buttons side by side
