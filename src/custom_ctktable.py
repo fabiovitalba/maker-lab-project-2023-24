@@ -212,8 +212,9 @@ class CustomCTkTable(customtkinter.CTkFrame):
                     del args["write"]
        
                 ##### CUSTOM
-                if (i < len(self.row_colors)) and (i > 0):  # only for rows that have colors and only if we're not in heading
-                    args["text_color"] = self.row_colors[i]
+                if (i <= len(self.row_colors)) and (i > 0):  # only for rows that have colors and only if we're not in heading
+                    if (self.row_colors[i-1] != ""):
+                        args["text_color"] = self.row_colors[i-1]
                 ##### CUSTOM
 
                 if self.write:

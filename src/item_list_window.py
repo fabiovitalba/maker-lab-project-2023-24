@@ -26,7 +26,7 @@ def item_list_window(win_height, win_width, button_font, items_df):
         days_to_exp = (pd.to_datetime(row[EXP_LBL], unit="s") - datetime.now()).days
         if days_to_exp < 0:
             row_colors.append("red")
-        elif (days_to_exp >= 0) or (days_to_exp < 4):
+        elif (days_to_exp >= 0) and (days_to_exp < 4):
             row_colors.append("orange")
         else:
             row_colors.append("")
