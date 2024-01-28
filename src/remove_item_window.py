@@ -18,8 +18,6 @@ def remove_item_window(win_height, win_width, button_font, items_df):
     selected_item_index = [0]   # must be a list in order to be editable from methods
 
     def reset_form():
-        left_arrow_button.configure(state="disabled")
-        right_arrow_button.configure(state="disabled")
         confirm_button.configure(state="disabled")
         label.configure(text="")
         barcode_entry.delete(0, ctk.END)
@@ -30,15 +28,24 @@ def remove_item_window(win_height, win_width, button_font, items_df):
         if event.keysym == "Return":
             confirm_barcode_input(item_row_index_list)
 
-    def update_item_label(items_df, item_row_index):
+    def get_selected_items(items_df):
         barcode_value = barcode_entry.get()
-        selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
-        # TODO: Add information about expiration date
-        label.configure(text=f"{selected_items.iloc[item_row_index][DESC_LBL]} ({selected_items.iloc[item_row_index][QTY_LBL]})")
+        if barcode_value != "":
+            selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
+        else:
+            selected_items = items_df
+        return selected_items
+
+    def update_item_label(items_df, item_row_index):
+        selected_items = get_selected_items(items_df)
+        # TODO: Add information about expiration date?
+        item_desc = selected_items.iloc[item_row_index][DESC_LBL]
+        item_qty = selected_items.iloc[item_row_index][QTY_LBL]
+        label.configure(text=f"{item_desc} ({item_qty})")
+        confirm_button.configure(state="normal")
 
     def update_item_index(index, delta):
-        barcode_value = barcode_entry.get()
-        selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
+        selected_items = get_selected_items(items_df)
         if index + delta < 0:
             index = len(selected_items) - 1
         elif index + delta >= len(selected_items):
@@ -56,9 +63,8 @@ def remove_item_window(win_height, win_width, button_font, items_df):
         update_item_label(items_df,item_row_index_list[0])
 
     def confirm_barcode_input(item_row_index_list):
-        barcode_value = barcode_entry.get()
+        selected_items = get_selected_items(items_df)
         item_row_index_list[0] = 0
-        selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
         if len(selected_items) > 0:
             if len(selected_items) > 1:
                 left_arrow_button.configure(state="normal")
@@ -69,8 +75,7 @@ def remove_item_window(win_height, win_width, button_font, items_df):
             reset_form()
 
     def confirm_input():
-        barcode_value = barcode_entry.get()
-        selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
+        selected_items = get_selected_items(items_df)
         remove_item(items_df, selected_items.iloc[selected_item_index].index)
 
         # Clear the entries for the next input
@@ -96,9 +101,7 @@ def remove_item_window(win_height, win_width, button_font, items_df):
     arrow_frame = ctk.CTkFrame(label_frame, width=50)
     arrow_frame.pack(side=ctk.RIGHT)
     right_arrow_button = ctk.CTkButton(arrow_frame, text="▶", command=lambda: move_right(item_row_index_list=selected_item_index), font=button_font, height=button_height, width=button_height)
-    right_arrow_button.configure(state="disabled")
     left_arrow_button = ctk.CTkButton(arrow_frame, text="◀", command=lambda: move_left(item_row_index_list=selected_item_index), font=button_font, height=button_height, width=button_height)
-    left_arrow_button.configure(state="disabled")
 
     right_arrow_button.pack(side=ctk.RIGHT, padx=10)
     left_arrow_button.pack(side=ctk.RIGHT)
