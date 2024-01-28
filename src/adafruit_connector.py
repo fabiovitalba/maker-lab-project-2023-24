@@ -39,7 +39,7 @@ def read_items():
         # In this case we create a new Adafruit Feed, a new DataFrame using the predefined Structure, and store the new DataFrame in Adafruit
         feed = aio.create_feed(Feed(name=ITEMS_KEY, key=ITEMS_KEY, history=False))
         items = pd.DataFrame(items_structure)
-        items_json = items.to_json(orient='records', date_format='iso', default_handler=str)
+        items_json = items.to_json(orient="records", date_format="iso", default_handler=str)
         aio.send_data(feed.key, items_json)
     
     return items
@@ -51,7 +51,7 @@ def update_items_in_adafruit(items_df):
     # add item to the adafruit item table
     try:
         feed = aio.feeds(ITEMS_KEY)
-        items_json = items_df.to_json(orient='records', date_format='iso', default_handler=str)
+        items_json = items_df.to_json(orient="records", date_format="iso", default_handler=str)
         aio.send_data(feed.key, items_json)
         return True
     except RequestError:

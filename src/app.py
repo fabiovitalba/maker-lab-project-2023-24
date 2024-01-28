@@ -33,23 +33,23 @@ def colorize_rows(df):
         now = datetime.now()
 
         # Calculate the difference between the date and now
-        diff = (df.loc[i, 'Expiration Date'] - now).days
+        diff = (df.loc[i, "Expiration Date"] - now).days
 
-        print(df.loc[i, 'Expiration Date'].strftime("%B %d, %Y"))
+        print(df.loc[i, "Expiration Date"].strftime("%B %d, %Y"))
 
-        df.loc[i, 'Expiration Date'] = df.loc[i, 'Expiration Date'].strftime("%B %d, %Y")
-        df.loc[i, 'Date added'] = df.loc[i, 'Date added'].strftime("%B %d, %Y")
+        df.loc[i, "Expiration Date"] = df.loc[i, "Expiration Date"].strftime("%B %d, %Y")
+        df.loc[i, "Date added"] = df.loc[i, "Date added"].strftime("%B %d, %Y")
 
-        print(df.loc[i, 'Date added'])
+        print(df.loc[i, "Date added"])
 
         df.loc[i] = df.loc[i].astype(str)
         
         # Colorize based on the difference
         if diff <= 1:
-            df.loc[i] = '\033[31m' + df.loc[i].astype(str) + '\033[0m'  # red
+            df.loc[i] = "\033[31m" + df.loc[i].astype(str) + "\033[0m"  # red
         elif diff <= 3:
-            df.loc[i] = '\033[33m' + \
-                df.loc[i].astype(str) + '\033[0m'  # yellow
+            df.loc[i] = "\033[33m" + \
+                df.loc[i].astype(str) + "\033[0m"  # yellow
 
     return df
 
@@ -72,7 +72,7 @@ def main():
             print("\033[1mQ\033[0m: Quit")
             option = input("Your option: ").upper()
 
-            if option == 'L':
+            if option == "L":
                 if (len(items_df) <= 0):
                     print("\033[33mNo items found.\033[0m\n")
                     continue
@@ -85,37 +85,36 @@ def main():
 
                 # Print items in a formatted table
                 items_copy = items_df.copy()
-                items_copy.sort_values(by=['Expiration Date'], inplace=True)
-                items_copy['Expiration Date'] = pd.to_datetime(items_copy['Expiration Date'], unit='s')
-                items_copy['Date added'] = pd.to_datetime(items_copy['Date added'], unit='s')
-                items_copy['Date modified'] = pd.to_datetime(items_copy['Date modified'], unit='s')
+                items_copy.sort_values(by=["Expiration Date"], inplace=True)
+                items_copy["Expiration Date"] = pd.to_datetime(items_copy["Expiration Date"], unit="s")
+                items_copy["Date added"] = pd.to_datetime(items_copy["Date added"], unit="s")
+                items_copy["Date modified"] = pd.to_datetime(items_copy["Date modified"], unit="s")
                 items_copy = colorize_rows(items_copy)
                 headers = [header.upper() for header in items_copy.columns]
                 print(tabulate(items_copy, headers=headers,
-                      tablefmt='fancy_grid', showindex=False, colalign=("center",)*len(headers)))
+                      tablefmt="fancy_grid", showindex=False, colalign=("center",)*len(headers)))
 
-            elif option == 'A':
+            elif option == "A":
                 barcode = input("Enter barcode: ")
                 description_temp = get_desc_from_barcode(barcode)
-                if (description_temp != ''):
-                    description = input(
-                        f"Enter name (press enter for '{description_temp}'): ") or description_temp
+                if (description_temp != ""):
+                    description = input(f"Enter name (press enter for '{description_temp}'): ") or description_temp
                 else:
                     description = input("Enter name: ")
                 quantity = get_quantity("Enter quantity (press enter for 1): ")
                 expiration_date = get_expiration_date()
                 new_item = [barcode, description, expiration_date,
-                            quantity, pd.to_datetime('now').timestamp(), None]
+                            quantity, pd.to_datetime("now").timestamp(), None]
                 if not add_item(items_df, new_item):
-                    print('\033[31mCould not add item.\033[0m')
+                    print("\033[31mCould not add item.\033[0m")
                 else:
-                    print('\033[92mItem added successfully!\033[0m')
+                    print("\033[92mItem added successfully!\033[0m")
 
-            elif option == 'R':
+            elif option == "R":
                 # continue reading for barcode until one that is in items_df is provided
                 while True:
                     barcode = input("Enter a barcode: ")
-                    if barcode in items_df['Barcode'].values:
+                    if barcode in items_df["Barcode"].values:
                         break
                     else:
                         print(
@@ -124,7 +123,7 @@ def main():
                 quantity = get_quantity("Enter quantity to remove (press enter for 1): ")
                 reduce_item(items_df, barcode, quantity)
 
-            elif option == 'Q':
+            elif option == "Q":
                 print("\nProgram terminated by user. Goodbye!")
                 break
 

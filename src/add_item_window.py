@@ -66,12 +66,12 @@ def add_item_window(win_height, win_width, button_font, items_df):
         #TODO: add checks for missing values?
 
         # You can process the input values as needed
-        new_item = [barcode_value, description_value, pd.to_datetime(curr_exp_date_list[0]).timestamp(), quantity_value, pd.to_datetime('now').timestamp()]
+        new_item = [barcode_value, description_value, pd.to_datetime(curr_exp_date_list[0]).timestamp(), quantity_value, pd.to_datetime("now").timestamp()]
         if not add_item(items_df, new_item):
             #TODO: change prints to something in gui
-            print('\033[31mCould not add item.\033[0m')
+            print("\033[31mCould not add item.\033[0m")
         else:
-            print('\033[92mItem added successfully!\033[0m')
+            print("\033[92mItem added successfully!\033[0m")
 
         # Clear the entries for the next input
         barcode_entry.delete(0, ctk.END)

@@ -1,6 +1,8 @@
 import customtkinter as ctk
 from adafruit_connector import remove_item
 
+from const import BARCODE_LBL, DESC_LBL, EXP_LBL, QTY_LBL
+
 def remove_item_window(win_height, win_width, button_font, items_df):
     ai_window = ctk.CTkToplevel()
     canvas = ctk.CTkCanvas(ai_window, height=win_height, width=win_width)
@@ -30,13 +32,13 @@ def remove_item_window(win_height, win_width, button_font, items_df):
 
     def update_item_label(items_df, item_row_index):
         barcode_value = barcode_entry.get()
-        selected_items = items_df.loc[items_df['Barcode'] == barcode_value]
+        selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
         # TODO: Add information about expiration date
-        label.configure(text=f"{selected_items.iloc[item_row_index]['Description']} ({selected_items.iloc[item_row_index]['Quantity']})")
+        label.configure(text=f"{selected_items.iloc[item_row_index][DESC_LBL]} ({selected_items.iloc[item_row_index][QTY_LBL]})")
 
     def update_item_index(index, delta):
         barcode_value = barcode_entry.get()
-        selected_items = items_df.loc[items_df['Barcode'] == barcode_value]
+        selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
         if index + delta < 0:
             index = len(selected_items) - 1
         elif index + delta >= len(selected_items):
@@ -56,7 +58,7 @@ def remove_item_window(win_height, win_width, button_font, items_df):
     def confirm_barcode_input(item_row_index_list):
         barcode_value = barcode_entry.get()
         item_row_index_list[0] = 0
-        selected_items = items_df.loc[items_df['Barcode'] == barcode_value]
+        selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
         if len(selected_items) > 0:
             if len(selected_items) > 1:
                 left_arrow_button.configure(state="normal")
@@ -68,7 +70,7 @@ def remove_item_window(win_height, win_width, button_font, items_df):
 
     def confirm_input():
         barcode_value = barcode_entry.get()
-        selected_items = items_df.loc[items_df['Barcode'] == barcode_value]
+        selected_items = items_df.loc[items_df[BARCODE_LBL] == barcode_value]
         remove_item(items_df, selected_items.iloc[selected_item_index].index)
 
         # Clear the entries for the next input
