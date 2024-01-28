@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from adafruit_connector import remove_item
 
 def remove_item_window(win_height, win_width, button_font, items_df):
     ai_window = ctk.CTkToplevel()
@@ -12,7 +13,7 @@ def remove_item_window(win_height, win_width, button_font, items_df):
     input_font = ("Helvetica", 20, "bold")
     input_width = 600
     input_height = 100
-    selected_item_index = [0]
+    selected_item_index = [0]   # must be a list in order to be editable from methods
 
     def reset_form():
         left_arrow_button.configure(state="disabled")
@@ -45,20 +46,15 @@ def remove_item_window(win_height, win_width, button_font, items_df):
         return index
 
     def move_left(item_row_index_list):
-        print(item_row_index_list)
         item_row_index_list[0] = update_item_index(item_row_index_list[0], -1)
-        print(item_row_index_list)
         update_item_label(items_df,item_row_index_list[0])
 
     def move_right(item_row_index_list):
-        print(item_row_index_list)
         item_row_index_list[0] = update_item_index(item_row_index_list[0], 1)
-        print(item_row_index_list)
         update_item_label(items_df,item_row_index_list[0])
 
     def confirm_barcode_input(item_row_index_list):
         barcode_value = barcode_entry.get()
-        print(items_df)
         item_row_index_list[0] = 0
         selected_items = items_df.loc[items_df['Barcode'] == barcode_value]
         if len(selected_items) > 0:
@@ -72,8 +68,8 @@ def remove_item_window(win_height, win_width, button_font, items_df):
 
     def confirm_input():
         barcode_value = barcode_entry.get()
-
-        # You can process the input values as needed
+        selected_items = items_df.loc[items_df['Barcode'] == barcode_value]
+        remove_item(items_df, selected_items.iloc[selected_item_index].index)
 
         # Clear the entries for the next input
         reset_form()

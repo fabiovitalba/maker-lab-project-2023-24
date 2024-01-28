@@ -70,18 +70,7 @@ def add_item(items_df, item):
 
     return update_items_in_adafruit(items_df)
 
-def reduce_item(items_df, barcode, quantity_diff):
-    #TODO: This must be reworked to use the dataframe index for deletion/alteration
-    # find the provided barcode in items_df, and decrease the quantity accordingly
-    # if the quantity is equal or below 0, remove the item
-    items_df.loc[items_df[BARCODE_LBL] == barcode, QTY_LBL] -= quantity_diff
-    if (items_df.loc[items_df[BARCODE_LBL] == barcode, QTY_LBL].all() <= 0):
-        remove_item(items_df, barcode)
-    return update_items_in_adafruit(items_df)
-
-def remove_item(items_df, barcode):
-    #TODO: This must be reworked to use the dataframe index for deletion/alteration
-    # find the provided barcode in items_df and remove its entry
-    items_df.drop(items_df.loc[items_df[BARCODE_LBL] == barcode].index, inplace=True)
+def remove_item(items_df, row_index):
+    items_df.drop(row_index, inplace=True)
     return update_items_in_adafruit(items_df)
 # endregion Items-methods
