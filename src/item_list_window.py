@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import pandas as pd
-from CTkTable import *
+from datetime import datetime
+
+from custom_ctktable import *   # Adapted implementation of CTKtable
 
 from const import DESC_LBL, EXP_LBL, QTY_LBL
 
@@ -18,9 +20,21 @@ def item_list_window(win_height, win_width, button_font, items_df):
 
     items_df_reduced = items_df.loc[ : , [DESC_LBL, EXP_LBL, QTY_LBL] ]
     items_df_reduced.sort_values(by=[EXP_LBL], inplace=True)
-    items_df_reduced[EXP_LBL] = pd.to_datetime(items_df_reduced[EXP_LBL], unit='s').dt.strftime('%B %d, %Y')
+
+    row_colors = []
+    for index, row in items_df_reduced.iterrows():
+        days_to_exp = (pd.to_datetime(row[EXP_LBL], unit="s") - datetime.now()).days
+        if days_to_exp < 0:
+            row_colors.append("red")
+        elif (days_to_exp >= 0) or (days_to_exp < 4):
+            row_colors.append("orange")
+        else:
+            row_colors.append("")
+
+    items_df_reduced[EXP_LBL] = pd.to_datetime(items_df_reduced[EXP_LBL], unit="s").dt.strftime("%B %d, %Y")
+    
+
     table_values = [items_df_reduced.columns.tolist()] + items_df_reduced.values.tolist()
-    #TODO: Add colors: Either as DF column or somehow else --> The CTkTable library is very small, we can copy and adapt it
-    table = CTkTable(master=il_window, row=len(table_values), column=3, values=table_values, font=TABLE_ITEM_FONT)
+    table = CustomCTkTable(master=il_window, row=len(table_values), column=3, values=table_values, font=TABLE_ITEM_FONT, row_colors=row_colors)
     table.pack(expand=False, fill="both", padx=20, pady=20)
     canvas.pack()

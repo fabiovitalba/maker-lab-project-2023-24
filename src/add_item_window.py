@@ -22,7 +22,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
 
     def on_barcode_change(event):
         barcode = barcode_entry.get()
-        if event.keysym == "Return":
+        if (event.keysym == "Return") and (barcode != ""):
             description = find_desc_from_barcode(barcode)
             if description == "":
                 # jump to description
@@ -37,15 +37,18 @@ def add_item_window(win_height, win_width, button_font, items_df):
 
     def on_description_change(event):
         if event.keysym == "Return":
-            quantity_entry.delete(0, ctk.END)
-            quantity_entry.insert(0, str(1.0))
-            quantity_entry.focus()
+            description = description_entry.get()
+            if description != "":
+                quantity_entry.delete(0, ctk.END)
+                quantity_entry.insert(0, str(1.0))
+                quantity_entry.focus()
 
     def on_quantity_change(event):
         if event.keysym == "Return":
             expiration_date_entry.delete(0, ctk.END)
             expiration_date_entry.insert(0, str(curr_exp_date_list[0].strftime("%d/%m/%Y")))
             expiration_date_entry.focus()
+            confirm_button.configure(state="normal")
 
     def on_exp_date_change(event, exp_date_list):
         exp_date_text = expiration_date_entry.get()
@@ -63,15 +66,10 @@ def add_item_window(win_height, win_width, button_font, items_df):
         barcode_value = barcode_entry.get()
         description_value = description_entry.get()
         quantity_value = quantity_entry.get()
-        #TODO: add checks for missing values?
 
         # You can process the input values as needed
-        new_item = [barcode_value, description_value, pd.to_datetime(curr_exp_date_list[0]).timestamp(), quantity_value, pd.to_datetime('now').timestamp()]
-        if not add_item(items_df, new_item):
-            #TODO: change prints to something in gui
-            print('\033[31mCould not add item.\033[0m')
-        else:
-            print('\033[92mItem added successfully!\033[0m')
+        new_item = [barcode_value, description_value, pd.to_datetime(curr_exp_date_list[0]).timestamp(), quantity_value, pd.to_datetime("now").timestamp()]
+        add_item(items_df, new_item)
 
         # Clear the entries for the next input
         barcode_entry.delete(0, ctk.END)
@@ -79,6 +77,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
         quantity_entry.delete(0, ctk.END)
         expiration_date_entry.delete(0, ctk.END)
         barcode_entry.focus()
+        confirm_button.configure(state="disabled")
 
     def cancel_input():
         ai_window.destroy()
@@ -125,6 +124,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
     cancel_button.pack(side=ctk.LEFT, padx=10)
 
     confirm_button = ctk.CTkButton(button_frame, text="Confirm", command=confirm_input, width=button_width, height=button_height, font=button_font)
+    confirm_button.configure(state="disabled")
     confirm_button.pack(side=ctk.LEFT)
 
     # Pack the canvas

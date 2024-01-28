@@ -11,9 +11,9 @@ def get_desc_from_barcode(barcode):
 
     if 200 <= response.status_code < 400:
         data = response.json()
-        if 'product' in data:
-            if 'product_name' in data['product']:
-                return data['product']['product_name']
+        if "product" in data:
+            if "product_name" in data["product"]:
+                return data["product"]["product_name"]
         return ""
     else:
         return ""
