@@ -80,7 +80,7 @@ def add_item(items_df, item):
 
 
 def remove_item(items_df, row_index, quantity):
-    current_quantity = items_df.loc[row_index, QTY_LBL]
+    current_quantity = float(items_df.iloc[row_index][QTY_LBL])
 
     if quantity >= current_quantity:
         # Remove the entire row if the specified quantity is greater or equal to the current quantity

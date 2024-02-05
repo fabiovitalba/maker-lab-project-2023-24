@@ -84,7 +84,7 @@ def remove_item_window(win_height, win_width, button_font, items_df):
     def confirm_input():
         selected_items = get_selected_items(items_df)
         remove_item(
-            items_df, selected_items.iloc[selected_item_index].index, int(quantity_entry.get()))
+            items_df, selected_items.iloc[selected_item_index].index, float(quantity_entry.get()))
 
         # Clear the entries for the next input
         reset_form()
