@@ -10,15 +10,6 @@ WIN_HEIGHT = 600
 TITLE_FONT = ("Helvetica", 18, "bold")
 BUTTON_FONT = ("Helvetica", 28, "bold")
 
-
-def display_message(message):
-    print(message)
-    # message_label = tk.Label(root, text=message)
-    # message_label.pack(pady=10)
-    # Auto-remove the message after a few seconds
-    # root.after(3000, message_label.destroy)
-
-
 def main_menu_window(mm_window, items_df):
     canvas = ctk.CTkCanvas(mm_window, height=WIN_HEIGHT, width=WIN_WIDTH)
     title_label = ctk.CTkLabel(mm_window, text="Fridge Inventory Management")
