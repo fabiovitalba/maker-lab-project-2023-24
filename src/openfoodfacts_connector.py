@@ -1,6 +1,8 @@
 import requests
 
-# region Barcode-methods
+
+# Receives a barcode string and returns a description found on the openfoodfacts API. If no
+# description is found, an empty string is returned.
 def get_desc_from_barcode(barcode):
     # The page https://world.openfoodfacts.org/data provides free data connected to the provided barcode.
     # Using this URL we can retrieve the description of the product using only the barcode.
@@ -17,4 +19,3 @@ def get_desc_from_barcode(barcode):
         return ""
     else:
         return ""
-# endregion Barcode-methods

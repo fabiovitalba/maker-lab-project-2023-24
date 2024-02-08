@@ -4,7 +4,6 @@ from const import ITEMS_KEY, BARCODE_LBL, DESC_LBL, EXP_LBL, QTY_LBL, DATE_ADDED
 from env import adafruit_user, adafruit_key
 import pandas as pd
 
-# region Items-methods
 items_structure = {
     BARCODE_LBL: [],
     DESC_LBL: [],
@@ -40,11 +39,9 @@ def read_items():
     except RequestError:
         # If an error is thrown, we assume the Adafruit Feed does not exist
         # In this case we create a new Adafruit Feed, a new DataFrame using the predefined Structure, and store the new DataFrame in Adafruit
-        feed = aio.create_feed(
-            Feed(name=ITEMS_KEY, key=ITEMS_KEY, history=False))
+        feed = aio.create_feed(Feed(name=ITEMS_KEY, key=ITEMS_KEY, history=False))
         items = pd.DataFrame(items_structure)
-        items_json = items.to_json(
-            orient="records", date_format="iso", default_handler=str)
+        items_json = items.to_json(orient="records", date_format="iso", default_handler=str)
         aio.send_data(feed.key, items_json)
 
     return items
@@ -57,8 +54,7 @@ def update_items_in_adafruit(items_df):
     # add item to the adafruit item table
     try:
         feed = aio.feeds(ITEMS_KEY)
-        items_json = items_df.to_json(
-            orient="records", date_format="iso", default_handler=str)
+        items_json = items_df.to_json(orient="records", date_format="iso", default_handler=str)
         aio.send_data(feed.key, items_json)
         return True
     except RequestError:
@@ -90,4 +86,3 @@ def remove_item(items_df, row_index, quantity):
         items_df.loc[row_index, QTY_LBL] -= quantity
 
     return update_items_in_adafruit(items_df)
-# endregion Items-methods

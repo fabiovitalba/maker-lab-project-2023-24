@@ -9,7 +9,7 @@ This Project aims to reduce the amount of food wasted in households. More often 
 Create a file `/src/env.py` with two variables named `adafruit_user` and `adafruit_key` and assign the values in order to connect to the adafruit.io services.
 
 # Usage
-This project is optimized to be run on a Raspberry Pi, in fullscreen mode (1024x600) on a Touch Screen Display (of at least 7" Diameter). In order to use all features, the usage of a USB 2D Barcode-Scanner is highly recommended.
+This project is optimized to be run on a Raspberry Pi, in fullscreen mode (1024x600) on a Touch Screen Display (of at least 7" Diameter). In order to use all features, the usage of a USB 1D Barcode-Scanner is highly recommended.
 
 # Preview
 Here are some screenshots from the App:
@@ -56,6 +56,7 @@ This file contains the function that builds the "Remove item" View and displays 
 
 # Credits
 * We're using the free and open API from https://world.openfoodfacts.org/data which allows us to retrieve the product description from it's barcode.
+* We're using the package [customtkinter](https://github.com/TomSchimansky/CustomTkinter). This is a nicer version of the default `tkinter` package, but offers the same functionality.
 * We're using an adapted version of [CTKTable](https://github.com/Akascape/CTkTable/tree/main). The adaption is the introduction of formatted row colors based on dataset.
 
 # Authors
