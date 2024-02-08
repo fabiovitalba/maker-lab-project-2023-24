@@ -2,6 +2,10 @@ from datetime import date, timedelta
 
 from const import ADD_DAY, ADD_WEEK, ADD_MONTH, CONFIRM, REM_DAY, REM_WEEK, REM_MONTH
 
+
+# Receives a Date and an input string. Checks the input string for special strings like "+1D", "-1W", "CONFIRM" and 
+# alters the date based on the special string found in the input string. Returns the date and whether or not the next
+# form-input should be selected.
 def handle_exp_date_input(input_str: str, exp_date: date):
     next_input = False
     if (CONFIRM in input_str):

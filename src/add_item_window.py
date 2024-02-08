@@ -7,6 +7,13 @@ from adafruit_connector import add_item
 from expiration_date import handle_exp_date_input
 
 
+# Open a new Windows in order for the User to add items to their inventory.
+# Each input may be confirmed using the "Return"/"Enter"-Key. Alternatively, 
+# one can simply scan a value and the value will be confirmed automatically.
+# 
+# Based on the Barcode an Item Description is retrieved from the openfoodfacts API.
+# If no Description is found, then the description must be written manually.
+# The Expiration Date may be written manually, or be altered using Barcodes.
 def add_item_window(win_height, win_width, button_font, items_df):
     ai_window = ctk.CTkToplevel()
     canvas = ctk.CTkCanvas(ai_window, height=win_height, width=win_width)
@@ -22,6 +29,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
     # This must be a list in order to be mutable from the change_event
     curr_exp_date_list = [datetime.date.today()]
 
+    # Resets the Form's Inputs and focuses the "Barcode"-input
     def reset_form():
         barcode_entry.delete(0, ctk.END)
         description_entry.delete(0, ctk.END)
@@ -30,12 +38,15 @@ def add_item_window(win_height, win_width, button_font, items_df):
         barcode_entry.focus()
         confirm_button.configure(state="disabled")
 
+    # Sets the "Expiration Date"-input and focuses it
     def focus_expiration_date_input():
         expiration_date_entry.delete(0, ctk.END)
         expiration_date_entry.insert(0, str(curr_exp_date_list[0].strftime("%d/%m/%Y")))
         expiration_date_entry.focus()
         confirm_button.configure(state="normal")
 
+    # Checks for a "Return"-input in the "Barcode"-input. When confirming the Barcode, a Description is searched.
+    # If a Description is found, then the "Expiration Date"-input is focused, otherwise the "Description"-input is focused.
     def on_barcode_change(event):
         barcode = barcode_entry.get()
         if (event.keysym == "Return") and (barcode != ""):
@@ -49,12 +60,16 @@ def add_item_window(win_height, win_width, button_font, items_df):
                 description_entry.insert(0, description)
                 focus_expiration_date_input()
 
+    # Checks for a "Return"-input in the "Description"-input. When confirming the Description, the "Expiration Date"-input is focused.
     def on_description_change(event):
         if event.keysym == "Return":
             description = description_entry.get()
             if description != "":
                 focus_expiration_date_input()
 
+    # Checks for a "Return"-input in the "Expiration Date"-input. When confirming the Exporation Date it is checked for special strings for date
+    # alterations. If for example "+1M" is found in the string, then the expiration date is incremented by a month. If "CONFIRM" is passed then
+    # the inputs are all confirmed and an Item is added to the inventory.
     def on_exp_date_change(event, exp_date_list):
         exp_date_text = expiration_date_entry.get()
         next_input = False
@@ -65,6 +80,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
             else:
                 focus_expiration_date_input()
 
+    # Retrieves all values from the inputs and creates a new Item in the local and cloud Inventory of items. Afterwards resets the form.
     def confirm_input():
         confirm_button.configure(state="disabled")
         barcode_value = barcode_entry.get()
@@ -78,9 +94,11 @@ def add_item_window(win_height, win_width, button_font, items_df):
         # Clear the entries for the next item input
         reset_form()
 
+    # Closes the "Add Item"-Window.
     def cancel_input():
         ai_window.destroy()
 
+    # Updates the Quantity based on the "+" and "-" buttons.
     def update_quantity(value):
         current_value = float(quantity_entry.get())
         new_value = max(1, current_value + value)
@@ -113,7 +131,7 @@ def add_item_window(win_height, win_width, button_font, items_df):
     quantity_label_value.pack(side=ctk.LEFT, padx=10)
     plus_button = ctk.CTkButton(quantity_frame, text="+", command=lambda: update_quantity(1.0), font=input_font, height=button_height)
     plus_button.pack(side=ctk.LEFT)
-    minus_button = ctk.CTkButton(quantity_frame, text="-", command=lambda: update_quantity(-1.0), font=input_font,  height=button_height)
+    minus_button = ctk.CTkButton(quantity_frame, text="-", command=lambda: update_quantity(-1.0), font=input_font, height=button_height)
     minus_button.pack(side=ctk.LEFT, padx=(10, 0))
 
     expiration_date_frame = ctk.CTkFrame(ai_window)
@@ -135,5 +153,4 @@ def add_item_window(win_height, win_width, button_font, items_df):
     confirm_button.configure(state="disabled")
     confirm_button.pack(side=ctk.LEFT)
 
-    # Pack the canvas
     canvas.pack()
