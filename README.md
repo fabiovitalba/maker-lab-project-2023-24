@@ -1,4 +1,4 @@
-# Fridge Inventory Management
+# FIM: Fridge Inventory Management
 ## Maker Lab Project 2023/24
 Project for the Maker Lab Course of unibz of the year 2023/24.
 
